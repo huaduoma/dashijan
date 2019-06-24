@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="css/reset.css">
     <link rel="stylesheet" type="text/css" href="css/iconfont.css">
     <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" href="./js/bootstrap/css/bootstrap.min.css">
 </head>
 
 <body>
@@ -29,8 +30,87 @@
             </form>
         </div>
 
-    </div> 
+    </div>
+    <!--模态框 -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">北京交通委提醒您</h4>
+                </div>
+                <div class="modal-body">
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="./js/jquery-1.12.4.min.js"></script>
+    <script src="./js/bootstrap/js/bootstrap.min.js"></script>
+    <script>
+        // 给登录按钮添加点击事件,判断输入的帐号密码是否为空,如果是就提示,不继续下一步代码,如果不是则用ajax发送请求
+        // 判断帐号密码正确即可跳转到后台首页,错误则提示帐号密码错误
+        $(function () {
+            $('.input_sub').on('click', function (e) {
+                //input  标签属性为submit 有默认跳转事件 需要阻止
+                e.preventDefault();
+                //获取input框的内容
+                var input_txt = $(".input_txt").val().trim();
+                var input_pass = $(".input_pass").val().trim();
+                console.log(input_pass);
+                console.log(input_txt);
+                if (input_pass == "" || input_txt == "") {
+                    // alert('不能为空请重新输入');
+                    $('.modal-body').text('账号或密码为空!');
+                    $('#myModal').modal({
+                        keyboard: true
+                    })
 
+                    return;
+                }
+                //ajax发送请求判断输入的账户密码是否正确
+                $.ajax({
+                    type: 'post',
+                    url: 'http://localhost:8000/admin/login',
+                    data: {
+                        user_name: input_txt,
+                        password: input_pass,
+                    },
+                    success: function (backData) {
+
+                        if (backData.code == 200) {
+                            // alert('恭喜登陆成功,现在将跳转到首页');
+                            $('.modal-body').text('恭喜登录成功,现在将跳转到首页');
+                            $('#myModal').modal({
+                                keyboard: true
+                            })
+                               window.location.href = './index.html';
+                        } else {
+                            // alert('帐号或者密码有误,请重新输入')
+                            $('.modal-body').text('帐号或者密码有误,请重新输入');
+                            $('#myModal').modal({
+                                keyboard: true
+                            })
+                        }
+                    }
+                })
+
+            })
+        })
+
+
+
+
+
+
+
+
+    </script>
 </body>
 
 </html>
