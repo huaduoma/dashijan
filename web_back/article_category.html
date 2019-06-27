@@ -91,7 +91,7 @@
                 </div>
                 <div class="modal-body">
                     <form>
-                        <!-- <input type="hidden" class="id" name="id"> -->
+                        <input type="hidden" class="id" name="id">
                         <div class="form-group">
                             <label for="recipient-name" class="control-label">分类名称:</label>
                             <input type="text" name="name" class="form-control name">
@@ -162,10 +162,10 @@
                         }
                     }
                 })
-
+             
             }
             test();
-
+           
 
             //给页面上的新增分类按钮添加点击事件
             $('.btn-addfenlei').on('click', function () {
@@ -177,12 +177,61 @@
 
 
             //分类新增
+            
+           
+            // 1.给模态框中新增(保存)按钮设置一个点击事件
+            $('#model_add').click(function () {
+
+                if ($(this).hasClass('btn-success')) {
+                    var data1 = $('form').serialize(); //表单序列化
+                    $.ajax({
+                        type: 'post',
+                        url: 'http://localhost:8000/admin/category_edit',
+                        data: data1,
+                        success: function (backData) {
+                            console.log(backData);
+                            if(backData.code == 200){
+                                test();
+                            }
+                            
+                        }
+
+                    })
+                } else {
+                    // 获取用户输入的类别名和别名
+                    var name = $('.name').val();
+                    var slug = $('.slug').val();
+                    // 发送ajax请求
+                    $.ajax({
+                        type: 'post',
+                        url: 'http://localhost:8000/admin/category_add',
+                        data: {
+                            name: name,
+                            slug: slug
+                        },
+                        success: function (backData) {
+                            console.log(backData);
+                            if (backData.code == 200) {
+
+                                // 新增成功重新发送一次ajax请求
+                                test();
+                            }
+                        }
+                    });
+
+
+                    
+                }
 
 
 
+
+                $('#addModal').modal('hide');
+
+            });
             //分类删除 
             // 1.给删除按钮注册点击事件: 由于是模板动态生成的,需要用委托注册
-
+            
             $('tbody').on('click', '.btn-delete', function () {
                 var that = $(this)
 
@@ -208,11 +257,11 @@
 
             })
             //分类编辑
-
+            
             // 1.给编辑按钮注册点击事件(由于也是动态生成的,也需要委托注册)
             $('tbody').on('click', '.btn-edit', function () {
-
-
+               
+               
                 //将模态框中的 文字修改一下
                 $('#addModal .modal-title').html('修改分类');
                 //给那个模态框里的按钮添加一个btn-success类,修改一下文本
@@ -224,68 +273,12 @@
 
                 $('.modal-body .name').val(cateName);
                 $('.modal-body .slug').val(slugName);
-
-
+                $('.id').val(id)
                 //显示模态框
                 $('#addModal').modal('show');
-                // 1.给模态框中新增(保存)按钮设置一个点击事件
-                $('#model_add').click(function () {
-                    var name = $('.modal-body .name').val();
-                    var slug = $('.modal-body .slug').val();
-                    if ($(this).hasClass('btn-success')) {
-                        var data1 = $('form').serialize(); //表单序列化
-                        $.ajax({
-                            type: 'post',
-                            url: 'http://localhost:8000/admin/category_edit',
-                            data: {
-                                id: id,
-                                name: name,
-                                slug: slug
-                            },
-                            success: function (backData) {
-                                console.log(backData);
-                                if (backData.code == 200) {
-                                    test();
-                                }
-
-                            }
-
-                        })
-                    } else {
-                        // 获取用户输入的类别名和别名
-                        var name = $('.name').val();
-                        var slug = $('.slug').val();
-                        // 发送ajax请求
-                        $.ajax({
-                            type: 'post',
-                            url: 'http://localhost:8000/admin/category_add',
-                            data: {
-                                name: name,
-                                slug: slug
-                            },
-                            success: function (backData) {
-                                console.log(backData);
-                                if (backData.code == 200) {
-
-                                    // 新增成功重新发送一次ajax请求
-                                    test();
-                                }
-                            }
-                        });
-
-
-
-                    }
-
-
-
-
-                    $('#addModal').modal('hide');
-
-                });
             });
-
-
+         
+            
 
 
 
